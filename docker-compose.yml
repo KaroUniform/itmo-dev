@@ -1,0 +1,71 @@
+version: '3.7'
+
+services:
+    api:
+        build:
+            context: .
+            dockerfile: DockerfileApi
+        container_name: api
+        # restart: unless-stopped
+        ports:
+            - "8080:8080"
+        depends_on:
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        command: gunicorn --conf gunicorn_conf.py -b 0.0.0.0:8080 -k uvicorn.workers.UvicornWorker api.main:app
+
+    redis:
+        image: redis
+        container_name: redis
+        restart: always
+        volumes:
+            - ./redis/data:/data
+            - ./redis/redis.conf:/redis/redis.conf
+        expose:
+            - "6379"
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            interval: 10s
+            timeout: 3s
+            retries: 5
+            start_period: 1s
+        command: redis-server /redis/redis.conf
+
+    postgres:
+        image: postgres:16
+        container_name: postgres
+        environment:
+            POSTGRES_USER: people_safety
+            POSTGRES_PASSWORD: people_safety
+            POSTGRES_DB: people_safety
+        volumes:
+            - ./postgres:/var/lib/postgresql/data
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-U", "people_safety" ]
+            interval: 10s
+            timeout: 4s
+            retries: 5
+            start_period: 1s
+        restart: always
+
+    worker:
+        build:
+            context: .
+            dockerfile: DockerfileWorker
+        container_name: worker
+        # restart: unless-stopped
+        command: arq worker.config.WorkerSettings.WorkerSettings
+        depends_on:
+            redis:
+                condition: service_healthy
+
+    streamlit:
+        build:
+            context: .
+            dockerfile: DockerfileStreamlit
+        container_name: streamlit
+        ports:
+            - "8501:8501"
+        command: streamlit run stramlit/main.py --client.showErrorDetails=false

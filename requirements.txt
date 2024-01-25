@@ -1,0 +1,14 @@
+fastapi
+gunicorn
+aioredis
+uvicorn
+asyncpg
+fastapi-limiter
+pydantic
+arq
+sqlalchemy
+fastapi-users[sqlalchemy]
+bcrypt==4.0.1
+apscheduler
+Jinja2 
+numpy

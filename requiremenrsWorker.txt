@@ -1,0 +1,9 @@
+arq
+asyncpg
+sqlalchemy
+pandas
+pydantic
+fastapi
+fastapi-users[sqlalchemy]
+scikit-learn==1.2.2
+lightgbm

@@ -1,0 +1,4 @@
+streamlit
+streamlit-cookies-manager
+pandas
+numpy
