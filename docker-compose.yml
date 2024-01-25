@@ -4,7 +4,7 @@ services:
     api:
         build:
             context: .
-            dockerfile: DockerfileApi
+            dockerfile: Dockerfiles/DockerfileApi
         container_name: api
         # restart: unless-stopped
         ports:
@@ -14,7 +14,7 @@ services:
                 condition: service_healthy
             redis:
                 condition: service_healthy
-        command: gunicorn --conf gunicorn_conf.py -b 0.0.0.0:8080 -k uvicorn.workers.UvicornWorker api.main:app
+        command: gunicorn --conf api/gunicorn_conf.py -b 0.0.0.0:8080 -k uvicorn.workers.UvicornWorker api.main:app
 
     redis:
         image: redis
@@ -53,7 +53,7 @@ services:
     worker:
         build:
             context: .
-            dockerfile: DockerfileWorker
+            dockerfile: Dockerfiles/DockerfileWorker
         container_name: worker
         # restart: unless-stopped
         command: arq worker.config.WorkerSettings.WorkerSettings
@@ -64,7 +64,7 @@ services:
     streamlit:
         build:
             context: .
-            dockerfile: DockerfileStreamlit
+            dockerfile: Dockerfiles/DockerfileStreamlit
         container_name: streamlit
         ports:
             - "8501:8501"

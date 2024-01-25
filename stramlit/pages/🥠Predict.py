@@ -60,6 +60,10 @@ if st.button("Predict", use_container_width=True):
             verify=False,
         )
         task_created_json = res.json()
+
+        if "detail" in task_created_json:
+            st.error("Недостаточно средств")
+            st.stop()
         job_id = task_created_json["job_id"]
 
         res = requests.get(

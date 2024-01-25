@@ -33,8 +33,6 @@ if st.button("Submit"):
         url="https://api:8080/api/v1/auth/register", json=inputs, verify=False
     )
     if res.status_code == 201:
-        cookies["people_safety"] = res.cookies.get("people_safety")
-        cookies.save()
-        st.success("Registration successful")
+        st.success("Registration successful. Please now log in")
     else:
         st.error(f"Registration failed: {res.text}")
